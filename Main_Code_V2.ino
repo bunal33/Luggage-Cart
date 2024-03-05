@@ -9,13 +9,7 @@
 #define Relay1 12
 #define Relay2 11
 
-// Define Ultrasonic Sensor Pins
-#define TRIGGER_PIN_1  2  // Arduino pin tied to trigger pin on the first ultrasonic sensor.
-#define ECHO_PIN_1     3  // Arduino pin tied to echo pin on the first ultrasonic sensor.
-#define TRIGGER_PIN_2  4  // Arduino pin tied to trigger pin on the second ultrasonic sensor.
-#define ECHO_PIN_2     5  // Arduino pin tied to echo pin on the second ultrasonic sensor.
-#define TRIGGER_PIN_3  6  // Arduino pin tied to trigger pin on the third ultrasonic sensor.
-#define ECHO_PIN_3     7  // Arduino pin tied to echo pin on the third ultrasonic sensor.
+
 #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters).
 
 // Define LED and Buzzer
