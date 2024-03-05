@@ -384,7 +384,7 @@ void setupCompass() {
   displayCompassDetails();
 }
 
-void setup()
+void ()
 {
 
 
@@ -401,7 +401,7 @@ void setup()
 
   //relay
   pinMode(Relay1, OUTPUT);
-  pinMode(Relay1, OUTPUT);
+  pinMode(Relay2, OUTPUT);
   
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
