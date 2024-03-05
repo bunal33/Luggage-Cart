@@ -26,7 +26,7 @@
 
 // Library Imports
 #include <Wire.h>
-#include <Adafruit_Sensor.h>
+#include <Adafruit_Sensor.h>in
 #include <Adafruit_HMC5883_U.h>
 #include <SoftwareSerial.h>
 #include <BlynkSimpleSerialBLE.h>
