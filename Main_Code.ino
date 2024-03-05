@@ -26,7 +26,7 @@
 
 // Library Imports
 #include <Wire.h>
-#include <Adafruit_Sensor.h>in
+#include <Adafruit_Sensor.h>
 #include <Adafruit_HMC5883_U.h>
 #include <SoftwareSerial.h>
 #include <BlynkSimpleSerialBLE.h>
@@ -37,7 +37,7 @@
 #include "./TinyGPS.h"                 
 #include "./CoolerDefinitions.h"
 
-// NewPing setup of Ultrasonic Sensor Pins and mMximum Distance
+// NewPing setup of Ultrasonic Sensor Pins and maximum Distance
 NewPing sonar1(TRIGGER_PIN_1, ECHO_PIN_1, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 NewPing sonar2(TRIGGER_PIN_2, ECHO_PIN_2, MAX_DISTANCE);
 NewPing sonar3(TRIGGER_PIN_3, ECHO_PIN_3, MAX_DISTANCE);
@@ -105,7 +105,7 @@ bool feedgps() {
   return false;
 }
 
-// Killswitch Hook
+// Killswitch Hook!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 BLYNK_WRITE(V1) {
   enabled = !enabled;
   
