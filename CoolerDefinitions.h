@@ -9,6 +9,14 @@ char auth[] = "blynk-token";
 #define BLUETOOTH_TX_PIN 8
 #define BLUETOOTH_RX_PIN 9
 
+// Define Ultrasonic Sensor Pins
+#define TRIGGER_PIN_1  2  // Arduino pin tied to trigger pin on the first ultrasonic sensor.
+#define ECHO_PIN_1     3  // Arduino pin tied to echo pin on the first ultrasonic sensor.
+#define TRIGGER_PIN_2  4  // Arduino pin tied to trigger pin on the second ultrasonic sensor.
+#define ECHO_PIN_2     5  // Arduino pin tied to echo pin on the second ultrasonic sensor.
+#define TRIGGER_PIN_3  6  // Arduino pin tied to trigger pin on the third ultrasonic sensor.
+#define ECHO_PIN_3     7  // Arduino pin tied to echo pin on the third ultrasonic sensor.
+
 //#define MOTOR_A_EN_PIN 5
 //#define MOTOR_B_EN_PIN 9
 //#define MOTOR_A_IN_1_PIN 7
@@ -30,7 +38,7 @@ char auth[] = "blynk-token";
 
 // The offset of the mounting position to true north
 // It would be best to run the /examples/magsensor sketch and compare to the compass on your smartphone
-#define COMPASS_OFFSET 0.0f
+#define COMPASS_OFFSET 0.0f // need compass offset
 
 // How often the GPS should update in MS
 // Keep this above 1000
