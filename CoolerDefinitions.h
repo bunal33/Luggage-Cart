@@ -17,16 +17,16 @@ char auth[] = "blynk-token";
 #define TRIGGER_PIN_3  6  // Arduino pin tied to trigger pin on the third ultrasonic sensor.
 #define ECHO_PIN_3     7  // Arduino pin tied to echo pin on the third ultrasonic sensor.
 
-//#define MOTOR_A_EN_PIN 5
-//#define MOTOR_B_EN_PIN 9
-//#define MOTOR_A_IN_1_PIN 7
-//#define MOTOR_A_IN_2_PIN 8
-//#define MOTOR_B_IN_1_PIN 12
-//#define MOTOR_B_IN_2_PIN 4
+#define MOTOR_A_EN_PIN 5
+#define MOTOR_B_EN_PIN 9
+#define MOTOR_A_IN_1_PIN 7
+#define MOTOR_A_IN_2_PIN 8
+#define MOTOR_B_IN_1_PIN 12
+#define MOTOR_B_IN_2_PIN 4
 
 // If one motor tends to spin faster than the other, add offset
-//#define MOTOR_A_OFFSET 20
-//#define MOTOR_B_OFFSET 0
+#define MOTOR_A_OFFSET 20
+#define MOTOR_B_OFFSET 0
 
 // You must then add your 'Declination Angle' to the compass, which is the 'Error' of the magnetic field in your location.
 // Find yours here: http://www.magnetic-declination.com/
