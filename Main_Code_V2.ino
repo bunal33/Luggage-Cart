@@ -241,64 +241,64 @@ float geoHeading() {
 }
 
 void setSpeedMotorA(int speed) {
-  //digitalWrite(MOTOR_A_IN_1_PIN, LOW);
-  //digitalWrite(MOTOR_A_IN_2_PIN, HIGH);
+  digitalWrite(MOTOR_A_IN_1_PIN, LOW);
+  digitalWrite(MOTOR_A_IN_2_PIN, HIGH);
 
-  digitalWrite(Relay2, HIGH);
-  digitalWrite(Relay1, LOW);
+  //digitalWrite(Relay2, HIGH);
+  //digitalWrite(Relay1, LOW);
   
   // set speed to 200 out of possible range 0~255
   // may not need
-  // analogWrite(MOTOR_A_EN_PIN, speed + MOTOR_A_OFFSET);
+   analogWrite(MOTOR_A_EN_PIN, speed + MOTOR_A_OFFSET);
 }
 
 void setSpeedMotorB(int speed) {
-  // digitalWrite(MOTOR_B_IN_1_PIN, LOW);
-  // digitalWrite(MOTOR_B_IN_2_PIN, HIGH);
+   digitalWrite(MOTOR_B_IN_1_PIN, LOW);
+   digitalWrite(MOTOR_B_IN_2_PIN, HIGH);
 
-  digitalWrite(Relay1, HIGH);
-  digitalWrite(Relay2, LOW);
+  //digitalWrite(Relay1, HIGH);
+  //digitalWrite(Relay2, LOW);
   
   // set speed to 200 out of possible range 0~255
   // may not need 
-  // analogWrite(MOTOR_B_EN_PIN, speed + MOTOR_B_OFFSET);
+  analogWrite(MOTOR_B_EN_PIN, speed + MOTOR_B_OFFSET);
 }
 
-// void setSpeed(int speed)
-// {
+ void setSpeed(int speed)
+ {
   // this function will run the motors in both directions at a fixed speed
   // turn on motor A
-  // setSpeedMotorA(speed); // sends command to void setSpeedMotorA
+  setSpeedMotorA(speed); // sends command to void setSpeedMotorA
 
   // turn on motor B
-  // setSpeedMotorB(speed); // sends command to void setSpeedMotorB
-//}
+   setSpeedMotorB(speed); // sends command to void setSpeedMotorB
+}
 
 void stop() {
   // now turn off motors
-  // digitalWrite(MOTOR_A_IN_1_PIN, LOW);
-  // digitalWrite(MOTOR_A_IN_2_PIN, LOW);  
-  // digitalWrite(MOTOR_B_IN_1_PIN, LOW);
-  // digitalWrite(MOTOR_B_IN_2_PIN, LOW);
+   digitalWrite(MOTOR_A_IN_1_PIN, LOW);
+   digitalWrite(MOTOR_A_IN_2_PIN, LOW);  
+  digitalWrite(MOTOR_B_IN_1_PIN, LOW);
+  digitalWrite(MOTOR_B_IN_2_PIN, LOW);
 
-  digitalWrite(Relay2, LOW);
-  digitalWrite(Relay1, LOW);
+  //digitalWrite(Relay2, LOW);
+  //digitalWrite(Relay1, LOW);
   
 }
 
 void drive(int distance, float turn) {
-  // int fullSpeed = 230;
-  // int stopSpeed = 0;
+   int fullSpeed = 230;
+   int stopSpeed = 0;
   int fixedSpeed =50;
 
   // drive to location
   int s = fullSpeed;
   
-  //if ( distance < 8 ) {
-    //int wouldBeSpeed = s - stopSpeed;
-    //wouldBeSpeed *= distance / 8.0f;
-    //s = stopSpeed + wouldBeSpeed;
-  //}
+  if ( distance < 8 ) {
+    int wouldBeSpeed = s - stopSpeed;
+    wouldBeSpeed *= distance / 8.0f;
+    s = stopSpeed + wouldBeSpeed;
+  }
   
   int autoThrottle = constrain(s, 0, 255) //(s, stopSpeed, fullSpeed);
   //autoThrottle = 230;
@@ -386,16 +386,16 @@ void ()
   setupCompass();
 
   // Motor pins
-  // pinMode(MOTOR_A_EN_PIN, OUTPUT);
-  // pinMode(MOTOR_B_EN_PIN, OUTPUT);
-  // pinMode(MOTOR_A_IN_1_PIN, OUTPUT);
-  // pinMode(MOTOR_A_IN_2_PIN, OUTPUT);
-  // pinMode(MOTOR_B_IN_1_PIN, OUTPUT);
-  // pinMode(MOTOR_B_IN_2_PIN, OUTPUT);
+   pinMode(MOTOR_A_EN_PIN, OUTPUT);
+   pinMode(MOTOR_B_EN_PIN, OUTPUT);
+   pinMode(MOTOR_A_IN_1_PIN, OUTPUT);
+   pinMode(MOTOR_A_IN_2_PIN, OUTPUT);
+   pinMode(MOTOR_B_IN_1_PIN, OUTPUT);
+   pinMode(MOTOR_B_IN_2_PIN, OUTPUT);
 
   //relay
-  pinMode(Relay1, OUTPUT);
-  pinMode(Relay2, OUTPUT);
+ // pinMode(Relay1, OUTPUT);
+  //pinMode(Relay2, OUTPUT);
   
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
@@ -415,8 +415,8 @@ void ()
   pinMode(buzzerPin, OUTPUT);
 
   // Ensure relays (and thus motors) are off at startup
-  digitalWrite(Relay1, LOW); // Ensure relays (and thus motors) are off at startup
-  digitalWrite(Relay2, LOW);
+  //digitalWrite(Relay1, LOW); // Ensure relays (and thus motors) are off at startup
+  //digitalWrite(Relay2, LOW);
 
 }
 
@@ -479,14 +479,18 @@ void loop()
 
   if (distance1 < 5 || distance2 < 5 || distance3 < 5) {
     // Object detected within 5 cm range in any sensor
-    digitalWrite(Relay1, LOW); // Turn motors off
-    digitalWrite(Relay2, LOW);
-    digitalWrite(ledPin, HIGH); // Turn LED on
-    tone(buzzerPin, 1000); // Start buzzer
+    //digitalWrite(Relay1, LOW); // Turn motors off
+    //digitalWrite(Relay2, LOW);
+     digitalWrite(MOTOR_A_IN_1_PIN, LOW);
+     digitalWrite(MOTOR_A_IN_2_PIN, LOW);  
+     digitalWrite(MOTOR_B_IN_1_PIN, LOW);
+     digitalWrite(MOTOR_B_IN_2_PIN, LOW);
+     digitalWrite(ledPin, HIGH); // Turn LED on
+     tone(buzzerPin, 1000); // Start buzzer
   } else {
     // No object detected within 5 cm range in all sensors
-    digitalWrite(Relay1, HIGH); // Turn motors on
-    digitalWrite(Relay2, HIGH);
+  //  digitalWrite(Relay1, HIGH); // Turn motors on
+    //digitalWrite(Relay2, HIGH);
     digitalWrite(ledPin, LOW); // Turn LED off
     noTone(buzzerPin); // Stop buzzer
   }
