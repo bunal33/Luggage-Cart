@@ -6,15 +6,13 @@
 #define BLYNK_USE_DIRECT_CONNECT
 
 // Define Relays
-#define Relay1 12
-#define Relay2 11
+//define Relay1 12
+//#define Relay2 11
 
 
 #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters).
 
-// Define LED and Buzzer
-#define ledPin 13
-#define buzzerPin 10
+
 
 // Empty Digital Pins: 1,8,9
 
