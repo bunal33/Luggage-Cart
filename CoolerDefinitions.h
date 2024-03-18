@@ -1,8 +1,10 @@
 // Blynk Auth
 char auth[] = "blynk-token";
 
-// Pin variables
-//#define SERVO_PIN 3
+
+// Define LED and Buzzer
+#define ledPin 13
+#define buzzerPin 10
 
 #define GPS_TX_PIN 1
 
