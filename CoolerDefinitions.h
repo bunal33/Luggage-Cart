@@ -6,7 +6,7 @@ char auth[] = "E_aT698EAtWa09a2H9xLjAaR7acfksNv"; // blynk auth token
 #define ledPin 13
 #define buzzerPin 10
 
-#define GPS_TX_PIN 1
+#define GPS_TX_PIN 6
 
 #define BLUETOOTH_TX_PIN 8
 #define BLUETOOTH_RX_PIN 9
