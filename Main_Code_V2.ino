@@ -231,12 +231,7 @@ float geoHeading() {
   return headingDegrees;
 }
 
-//void setServo(int pos) {
-  //lidServo.attach(SERVO_PIN);
-  //lidServo.write(pos);
-  //delay(2000);
-  //lidServo.detach();
-}
+
 
 void setSpeedMotorA(int speed) {
   digitalWrite(MOTOR_A_IN_1_PIN, LOW);
