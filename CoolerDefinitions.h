@@ -1,5 +1,5 @@
 // Blynk Auth
-char auth[] = "blynk-token";
+char auth[] = "E_aT698EAtWa09a2H9xLjAaR7acfksNv"; // blynk auth token 
 
 
 // Define LED and Buzzer
