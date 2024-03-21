@@ -30,6 +30,15 @@
 #include "./TinyGPS.h"                 
 #include "./CoolerDefinitions.h"
 
+//Wİ-Fİ Conenction
+#include <SPI.h> // not sure if this is being used
+#include <WiFiS3.h>
+
+// Your WiFi credentials.
+// Set password to "" for open networks.
+char ssid[] = "ADD YOUR OWN SSID"; //Wifi Network's name
+char pass[] = "ADD YOUR OWN Password"; // Password
+
 // NewPing setup of Ultrasonic Sensor Pins and maximum Distance
 //NewPing sonar1(TRIGGER_PIN_1, ECHO_PIN_1, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 //NewPing sonar2(TRIGGER_PIN_2, ECHO_PIN_2, MAX_DISTANCE);
