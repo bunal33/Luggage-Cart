@@ -12,7 +12,9 @@
 
 #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters).
 
-
+#define BLYNK_TEMPLATE_ID "TMPL2RacGwd52"
+#define BLYNK_TEMPLATE_NAME "Follow Me Luggage CA"
+#define BLYNK_AUTH_TOKEN "E_aT698EAtWa09a2H9xLjAaR7acfksNv"
 
 // Empty Digital Pins: 1,8,9
 
