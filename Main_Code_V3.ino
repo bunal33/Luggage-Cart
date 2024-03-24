@@ -31,8 +31,7 @@
 #include "./CoolerDefinitions.h"
 
 //Wİ-Fİ Conenction
-#include <SPI.h> // not sure if this is being used
-#include <WiFiS3.h>
+//#include <SPI.h> // not sure if this is being used
 
 #include <WiFiNINA.h>
 
