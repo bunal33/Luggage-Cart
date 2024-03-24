@@ -1,13 +1,10 @@
 // Follow me and Obstacle Avoidance Code
+//CLIENT, receiver of the arduino r4 wifi connection 
 
 // Version 1
 // 3.4.2024
 
 #define BLYNK_USE_DIRECT_CONNECT
-
-// Define Relays
-//define Relay1 12
-//#define Relay2 11
 
 
 #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters).
@@ -39,6 +36,11 @@
 char ssid[] = "MyAP";          // Name of the access point
 char pass[] = "password";      // Password for the access point
 WiFiClient client;
+
+// Your WiFi credentials.
+// Set password to "" for open networks.
+char ssid[] = "ADD YOUR OWN SSID"; //Wifi Network's name
+char pass[] = "ADD YOUR OWN Password"; // Password
 
 // NewPing setup of Ultrasonic Sensor Pins and maximum Distance
 //NewPing sonar1(TRIGGER_PIN_1, ECHO_PIN_1, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
