@@ -66,7 +66,7 @@ SoftwareSerial nss(GPS_TX_PIN, 255);            // TXD to digital pin 6
 /* Compass */
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 
-GeoLoc checkGPS() {
+GeoLoc checkGPSRemote() {
   Serial.println("Reading onboard GPS: ");
   bool newdata = false;
   unsigned long start = millis();
@@ -77,12 +77,16 @@ GeoLoc checkGPS() {
   if (newdata) {
     return gpsdump(gps);
   }
+  GeoLoc remoteLoc; //replacing coolerLoc to remoteLoc
+  remoteLoc.lat = 0.0;
+  remoteLoc.lon = 0.0;
 
-  GeoLoc coolerLoc;
-  coolerLoc.lat = 0.0;
-  coolerLoc.lon = 0.0;
+  return remoteLoc;
   
-  return coolerLoc;
+  //GeoLoc coolerLoc;
+  //coolerLoc.lat = 0.0;
+  //coolerLoc.lon = 0.0;
+  //return coolerLoc;
 }
 
 // Get and process GPS data
@@ -92,13 +96,19 @@ GeoLoc gpsdump(TinyGPS &gps) {
   
   gps.f_get_position(&flat, &flon, &age);
 
-  GeoLoc coolerLoc;
-  coolerLoc.lat = flat;
-  coolerLoc.lon = flon;
+  GeoLoc remoteLoc;
+  remoteLoc.lat = flat;
+  remoteLoc.lon = flon;
 
-  Serial.print(coolerLoc.lat, 7); Serial.print(", "); Serial.println(coolerLoc.lon, 7);
+  return remoteLoc;
+  
+  //GeoLoc coolerLoc;
+  //coolerLoc.lat = flat;
+  //coolerLoc.lon = flon;
 
-  return coolerLoc;
+  Serial.print(remoteLoc.lat, 7); Serial.print(", "); Serial.println(remoteLoc.lon, 7);
+
+  //return coolerLoc;
 }
 
 // Feed data as it becomes available 
@@ -116,69 +126,6 @@ BLYNK_WRITE(V1) {
   
   //Stop the wheels
   stop();
-}
-
-// GPS Streaming Hook
-BLYNK_WRITE(V2) {
-  //GpsParam gps(param);
-  double latitude = param[0].asDouble();   // Extract latitude from parameter array
-  double longitude = param[1].asDouble();  // Extract longitude from parameter array
-
-  // Now you can use latitude and longitude values in your code
-  // For example, you can print them to Serial monitor:
-  Serial.print("Received GPS data - Latitude: ");
-  Serial.print(latitude, 7);
-  Serial.print(", Longitude: ");
-  Serial.println(longitude, 7);
-  Serial.println("Received remote GPS: ");
-  
-  // Print 7 decimal places for Lat
-  //Serial.print(gps.getLat(), 7); Serial.print(", "); Serial.println(gps.getLon(), 7);
-
-  GeoLoc phoneLoc;
-  phoneLoc.lat = latitude; //gps.getLat();
-  phoneLoc.lon = longitude; //gps.getLon();
-
-  driveTo(phoneLoc, GPS_STREAM_TIMEOUT);
-}
-
-// Terminal Hook
-BLYNK_WRITE(V3) {
-  Serial.print("Received Text: ");
-  Serial.println(param.asStr());
-
-  String rawInput(param.asStr());
-  int colonIndex;
-  int commaIndex;
-  
-  do {
-    commaIndex = rawInput.indexOf(',');
-    colonIndex = rawInput.indexOf(':');
-    
-    if (commaIndex != -1) {
-      String latStr = rawInput.substring(0, commaIndex);
-      String lonStr = rawInput.substring(commaIndex+1);
-
-      if (colonIndex != -1) {
-         lonStr = rawInput.substring(commaIndex+1, colonIndex);
-      }
-    
-      float lat = latStr.toFloat();
-      float lon = lonStr.toFloat();
-    
-      if (lat != 0 && lon != 0) {
-        GeoLoc waypoint;
-        waypoint.lat = lat;
-        waypoint.lon = lon;
-    
-        Serial.print("Waypoint found: "); Serial.print(lat); Serial.println(lon);
-        driveTo(waypoint, GPS_WAYPOINT_TIMEOUT);
-      }
-    }
-    
-    rawInput = rawInput.substring(colonIndex + 1);
-    
-  } while (colonIndex != -1);
 }
 
 void displayCompassDetails(void)
@@ -351,27 +298,27 @@ void drive(int distance, float turn) {
 
 void driveTo(struct GeoLoc &loc, int timeout) {
   if (nss.available()); //nss.listen
-  GeoLoc coolerLoc = checkGPS();
+  GeoLoc remoteLoc = checkGPS(); //GeoLoc coolerLoc = checkGPS();
   char gpsData = nss.read();
 
   //bluetoothSerial.listen();
 
-  if (coolerLoc.lat != 0 && coolerLoc.lon != 0 && enabled) {
+    if (remoteLoc.lat != 0 && remoteLoc.lon != 0 && enabled) { //if (coolerLoc.lat != 0 && coolerLoc.lon != 0 && enabled) {
     float d = 0;
     //Start move loop here
     do {
       nss.read();
-      coolerLoc = checkGPS();
+      remoteLoc = checkGPS(); //coolerLoc = checkGPS();
       //bluetoothSerial.listen();
       
-      d = geoDistance(coolerLoc, loc);
-      float t = geoBearing(coolerLoc, loc) - geoHeading();
+      d = geoDistance(remoteLoc, loc); //d = geoDistance(coolerLoc, loc);
+      float t = geoBearing(remoteLoc, loc) - geoHeading(); //float t = geoBearing(coolerLoc, loc) - geoHeading();
       
       Serial.print("Distance: ");
-      Serial.println(geoDistance(coolerLoc, loc));
+      Serial.println(geoDistance(remoteLoc, loc));
     
       Serial.print("Bearing: ");
-      Serial.println(geoBearing(coolerLoc, loc));
+      Serial.println(geoBearing(remoteLoc, loc));
 
       Serial.print("heading: ");
       Serial.println(geoHeading());
