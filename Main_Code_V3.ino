@@ -34,10 +34,12 @@
 #include <SPI.h> // not sure if this is being used
 #include <WiFiS3.h>
 
-// Your WiFi credentials.
-// Set password to "" for open networks.
-char ssid[] = "ADD YOUR OWN SSID"; //Wifi Network's name
-char pass[] = "ADD YOUR OWN Password"; // Password
+#include <WiFiNINA.h>
+
+// Client settings
+char ssid[] = "MyAP";          // Name of the access point
+char pass[] = "password";      // Password for the access point
+WiFiClient client;
 
 // NewPing setup of Ultrasonic Sensor Pins and maximum Distance
 //NewPing sonar1(TRIGGER_PIN_1, ECHO_PIN_1, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
@@ -428,9 +430,13 @@ void setup ()
   //pinMode(ledPin, OUTPUT);
   pinMode(buzzerPin, OUTPUT);
 
-  // Ensure relays (and thus motors) are off at startup
-  //digitalWrite(Relay1, LOW); // Ensure relays (and thus motors) are off at startup
-  //digitalWrite(Relay2, LOW);
+    // Connect to WiFi network (as client)
+  WiFi.begin(ssid, pass);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Connected to WiFi");
 
 }
 
@@ -454,6 +460,13 @@ void loop()
 {
   Blynk.run();
 
+  
+   if (client.connected()) {
+    // Send data to the server
+    client.println("Hello from client");
+    delay(1000);
+  }
+
   //unsigned int uS1 = sonar1.ping(); // Send ping, get ping time in microseconds (uS).
   //unsigned int uS2 = sonar2.ping();
   //unsigned int uS3 = sonar3.ping();
@@ -462,30 +475,7 @@ void loop()
   //long distance2 = uS2 / US_ROUNDTRIP_CM; // Convert time into distance
   //long distance3 = uS3 / US_ROUNDTRIP_CM; // Convert time into distance
 
- if (Serial.available()) {
-    char command = Serial.read(); // Read the command from Bluetooth
-
-   
-   
-   if (command == '1') {
-      // Command to move servo to 90 degrees
-      //servo.write(90);
-     // digitalWrite(ledPin, HIGH); // Turn on LED
-
-     //  turn off motors 
-      
-
-     tone(buzzerPin, 1000); // Start buzzer
-    } else if (command == '0') {
-      // Command to move servo to 0 degrees
-      //servo.write(0);
-      //digitalWrite(ledPin, LOW); // Turn off LED
-      noTone(buzzerPin); // Stop buzzer
-    }
-  }
 }  
-
-
   //if (distance1 < 5 || distance2 < 5 || distance3 < 5) {
     // Object detected within 5 cm range in any sensor
     //digitalWrite(Relay1, LOW); // Turn motors off
