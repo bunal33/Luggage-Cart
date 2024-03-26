@@ -128,6 +128,9 @@ BLYNK_WRITE(V1) {
   stop();
 }
 
+
+
+
 void displayCompassDetails(void)
 {
   sensor_t sensor;
@@ -174,7 +177,7 @@ float geoHeading() {
   mag.getEvent(&event);
 
   // Hold the module so that Z is pointing 'up' and you can measure the heading with x&y
-  // Calculate heading when the magnetometer is level, then correct for signs of axis.
+  // Calcue heading when the magnetometer is level, then correct for signs of axis.
   float heading = atan2(event.magnetic.y, event.magnetic.x);
 
   // Offset
@@ -303,7 +306,7 @@ void driveTo(struct GeoLoc &loc, int timeout) {
 
   //bluetoothSerial.listen();
 
-    if (remoteLoc.lat != 0 && remoteLoc.lon != 0 && enabled) { //if (coolerLoc.lat != 0 && coolerLoc.lon != 0 && enabled) {
+    if (remoteLoc. != 0 && remoteLoc.lon != 0 && enabled) { //if (coolerLoc.lat != 0 && coolerLoc.lon != 0 && enabled) {
     float d = 0;
     //Start move loop here
     do {
@@ -342,6 +345,51 @@ void setupCompass() {
   
   /* Display some basic information on this sensor */
   displayCompassDetails();
+}
+
+
+
+
+// BLYNK BUTTONS
+
+
+// Blynk function to display luggage cart location
+BLYNK_WRITE(V2) {
+  // Send cooler location data to Blynk app
+  Blynk.virtualWrite(V2, String("Latitude = ") + coolerLoc_lat + String(", Longitude = ") + coolerLoc_lon);
+}
+
+// Blynk function to display remote location
+BLYNK_WRITE(V3) {
+  // Send remote location data to Blynk app
+  Blynk.virtualWrite(V3, String("Latitude = ") + remoteLoc_lat + String(", Longitude = ") + remoteLoc_lon);
+}
+
+// Blynk function to display biggest distance
+BLYNK_WRITE(V4) {
+  // Calculate biggest distance
+  double biggestDistance = min(distance1, distance2);
+  
+  // Send biggest distance data to Blynk app
+  Blynk.virtualWrite(V4, biggestDistance);
+}
+
+// Blynk function to control LED based on distance
+BLYNK_WRITE(V5) {
+  // Get value from virtual pin
+  int value = param.asInt();
+
+
+
+  
+  // Check if biggest of distance1 and distance2 is greater than 30 cm
+  if (max(distance1, distance2) > 30) {
+    // Turn on LED
+    digitalWrite(ledPin, HIGH);
+  } else {
+    // Turn off LED
+    digitalWrite(ledPin, LOW);
+  }
 }
 
 void setup ()
