@@ -9,8 +9,8 @@ char auth[] = "E_aT698EAtWa09a2H9xLjAaR7acfksNv"; // blynk auth token
 #define GPS_TX_PIN 3
 #define GPS_RX_PIN 2
 
-#define Com_SDA A5
-#define Com_SCL A4
+#define COM_SDA A5
+#define COM_SCL A4
 
 
 // Define Ultrasonic Sensor Pins
