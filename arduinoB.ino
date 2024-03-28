@@ -1,6 +1,5 @@
 //LEADER, W/ THE USER 
 
-#include <WiFiNINA.h>
 
 #include "./TinyGPS.h"
 #include "./ArduinoBdefinitions.h"
@@ -24,13 +23,13 @@ WiFiServer server(80);         // Create a server on port 80
 SoftwareSerial gpsSerial(10, 11); // RX, TX
 
 // WiFi
-#include <WiFiNINA.h>
+//#include <WiFiNINA.h>
 #include <WiFiUdp.h>
 #include <WiFi.h>
 
-char ssid[] = "YourWiFiNetwork";      //  your network SSID (name)
-char pass[] = "YourWiFiPassword";   // your network password
-int status = WL_IDLE_STATUS;       // the Wifi radio's status
+//char ssid[] = "YourWiFiNetwork";      //  your network SSID (name)
+//char pass[] = "YourWiFiPassword";   // your network password
+//int status = WL_IDLE_STATUS;       // the Wifi radio's status
 
 WiFiUDP Udp;
 IPAddress destinationIP(192, 168, 1, 2);  // IP address of the follower Arduino
