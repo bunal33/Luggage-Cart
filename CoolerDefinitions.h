@@ -8,8 +8,6 @@ char auth[] = "E_aT698EAtWa09a2H9xLjAaR7acfksNv"; // blynk auth token
 
 #define GPS_TX_PIN 6
 
-#define BLUETOOTH_TX_PIN 8
-#define BLUETOOTH_RX_PIN 9
 
 // Define Ultrasonic Sensor Pins
 #define TRIGGER_PIN_1  2  // Arduino pin tied to trigger pin on the first ultrasonic sensor.
