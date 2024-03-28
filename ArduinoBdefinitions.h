@@ -1,5 +1,5 @@
-COM_SDA A5
-COM_SCL A4
+#define COM_SDA A5
+#define COM_SCL A4
 
 
 // You must then add your 'Declination Angle' to the compass, which is the 'Error' of the magnetic field in your location.
