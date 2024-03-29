@@ -8,33 +8,32 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_HMC5883_U.h>
 #include <SoftwareSerial.h>
-#include <TinyGPS.h>
+
+// WiFi
+
+//#include <WiFiNINA.h>
+#include <WiFiUdp.h>
+#include <WiFi.h>
 
 
 // GPS
 TinyGPS gps;
 
 // Access Point (AP) settings
-char ssid[] = "MyAP";          // Name of the access point
-char pass[] = "password";      // Password for the access point
+//char ssid[] = "MyAP";          // Name of the access point
+//char pass[] = "password";      // Password for the access point
 WiFiServer server(80);         // Create a server on port 80
 
 // SoftwareSerial for GPS module
 SoftwareSerial gpsSerial(10, 11); // RX, TX
 
-// WiFi
-//#include <WiFiNINA.h>
-#include <WiFiUdp.h>
-#include <WiFi.h>
-
-//char ssid[] = "YourWiFiNetwork";      //  your network SSID (name)
-//char pass[] = "YourWiFiPassword";   // your network password
+char ssid[] = "Aaron's iPhone";      //  your network SSID (name)
+char pass[] = "12345678";   // your network password
 //int status = WL_IDLE_STATUS;       // the Wifi radio's status
 
 WiFiUDP Udp;
 IPAddress destinationIP(192, 168, 1, 2);  // IP address of the follower Arduino
 unsigned int localUdpPort = 4210;  // local port to listen on
-
 
 void setup() {
   Serial.begin(9600);
@@ -49,7 +48,10 @@ void setup() {
   Serial.println("Access Point ready");
 
   // Start the server
-  server.begin();
+  Udp.begin(localUdpPort);
+
+  // Start the server
+  //server.begin();
 }
 
 void loop() {
@@ -59,8 +61,7 @@ void loop() {
     delay(1000); // Send GPS data every second
     }
 
-
-  WiFiClient client = server.available();  // Check for a client's connection
+    WiFiClient client = server.available();  // Check for a client's connection
 
   if (client) {
     Serial.println("Client connected");
@@ -75,6 +76,7 @@ void loop() {
     Serial.println("Client disconnected");
   }
 }
+
 bool feedGPS() {
   while (gpsSerial.available()) {
     if (gps.encode(gpsSerial.read()))
