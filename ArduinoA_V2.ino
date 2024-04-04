@@ -22,17 +22,17 @@ TinyGPSPlus gps;
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 
 // Motor control pins for L298N H-bridge
-const int ENA = 3;   // Enable pin for Motor A
-const int IN1 = 5;   // Input 1 pin for Motor A
-const int IN2 = 6;   // Input 2 pin for Motor A
+const int ENA = 5;   // Enable pin for Motor A
+const int IN1 = 7;   // Input 1 pin for Motor A
+const int IN2 = 8;   // Input 2 pin for Motor A
 const int ENB = 9;   // Enable pin for Motor B
-const int IN3 = 10;  // Input 1 pin for Motor B
-const int IN4 = 11;  // Input 2 pin for Motor B
+const int IN3 = 12;  // Input 1 pin for Motor B
+const int IN4 = 4;  // Input 2 pin for Motor B
 
 // LED pin for WiFi connection status
-const int wifiLED = 13; // Built-in LED pin on most Arduino boards
+const int wifiLED = 13; //not used Built-in LED pin on most Arduino boards
 
-const int gpsLED = 12; // GPS LED to indicate whether the GPS data received is valid
+const int gpsLED = 11; // not used GPS LED to indicate whether the GPS data received is valid
 
 // Constants for motor control
 const int minSpeed = 100;      // Minimum speed for motors
