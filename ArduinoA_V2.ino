@@ -29,6 +29,14 @@ const int ENB = 9;   // Enable pin for Motor B
 const int IN3 = 12;  // Input 1 pin for Motor B
 const int IN4 = 4;  // Input 2 pin for Motor B
 
+//US sensors
+//open pins 2,4,7,8
+//#define trigPin1 2
+//#define echoPin1 4
+
+//#define trigPin2 7
+//#define echoPin2 8
+
 // LED pin for WiFi connection status
 const int wifiLED = 13; //not used Built-in LED pin on most Arduino boards
 
@@ -63,6 +71,12 @@ void setup() {
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
 
+  //pinMode(trigPin1, OUTPUT);
+  //pinMode(echoPin1, INPUT);
+
+  //pinMode(trigPin2, OUTPUT);
+  //pinMode(echoPin2, INPUT);
+  
   // Explicitly stop the motors
   digitalWrite(ENA, LOW);
   digitalWrite(IN1, LOW);
@@ -78,7 +92,39 @@ void setup() {
 }
 
 void loop() {
+//sensor detection
+//long duration1, distance1;
+//long duration2, distance2;
 
+//digitalWrite(trigPin1, LOW);
+//digitalWrite(trigPin2, LOW);
+
+//delayMicroseconds(2);
+  
+//digitalWrite(trigPin1, HIGH);
+//digitalWrite(trigPin2, HIGH);
+
+//delayMicroseconds(2);
+  
+//digitalWrite(trigPin1, LOW);
+//digitalWrite(trigPin2, LOW);
+
+//duration1 =pulseIn(echoPin1,HIGH);
+//duration2 =pulseIn(echoPin2,HIGH);
+
+//distance1=duration1*(0.034/2);
+//distance2=duration2*(0.034/2);
+
+//if (distance1<=0.1524  || distance2<=0.1524 {
+
+//digitalWrite(ENA, LOW);
+//digitalWrite(IN1, LOW);
+//digitalWrite(IN2, LOW);
+//digitalWrite(ENB, LOW);
+//digitalWrite(IN3, LOW);
+//digitalWrite(IN4, LOW);
+//}
+  
     while (Serial1.available() > 0) {
     if (gps.encode(Serial1.read())) {
       if (gps.location.isValid()) {
