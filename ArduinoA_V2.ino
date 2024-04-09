@@ -1,5 +1,4 @@
-//cart
-
+// cart
 #include <WiFi.h>
 #include <TinyGPS++.h>
 #include <Wire.h>
@@ -22,25 +21,23 @@ TinyGPSPlus gps;
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 
 // Motor control pins for L298N H-bridge
-const int ENA = 5;   // Enable pin for Motor A
-const int IN1 = 7;   // Input 1 pin for Motor A
-const int IN2 = 8;   // Input 2 pin for Motor A
+const int ENA = 3;   // Enable pin for Motor A
+const int IN1 = 5;   // Input 1 pin for Motor A
+const int IN2 = 6;   // Input 2 pin for Motor A
 const int ENB = 9;   // Enable pin for Motor B
-const int IN3 = 12;  // Input 1 pin for Motor B
-const int IN4 = 4;  // Input 2 pin for Motor B
-
-//US sensors
-//open pins 2,4,7,8
-//#define trigPin1 2
-//#define echoPin1 4
-
-//#define trigPin2 7
-//#define echoPin2 8
+const int IN3 = 10;  // Input 1 pin for Motor B
+const int IN4 = 11;  // Input 2 pin for Motor B
 
 // LED pin for WiFi connection status
-const int wifiLED = 13; //not used Built-in LED pin on most Arduino boards
+const int wifiLED = 13; // Built-in LED pin on most Arduino boards (red)
 
-const int gpsLED = 11; // not used GPS LED to indicate whether the GPS data received is valid
+const int gpsLED = 12; // GPS LED to indicate whether the GPS data received is valid (green)
+
+// Define pins for ultrasonic sensors
+const int trigPin1 = 2;
+const int echoPin1 = 4;
+const int trigPin2 = 7;
+const int echoPin2 = 8;
 
 // Constants for motor control
 const int minSpeed = 100;      // Minimum speed for motors
@@ -62,6 +59,12 @@ void setup() {
   pinMode(gpsLED, OUTPUT); // Initialize the WiFi status LED pin as an output
   digitalWrite(gpsLED, LOW); // Ensure the LED is off initially
 
+  // Initialize ultrasonic sensors
+  pinMode(trigPin1, OUTPUT);
+  pinMode(echoPin1, INPUT);
+  pinMode(trigPin2, OUTPUT);
+  pinMode(echoPin2, INPUT);
+
   connectWiFi();
 
   pinMode(ENA, OUTPUT);
@@ -71,12 +74,6 @@ void setup() {
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
 
-  //pinMode(trigPin1, OUTPUT);
-  //pinMode(echoPin1, INPUT);
-
-  //pinMode(trigPin2, OUTPUT);
-  //pinMode(echoPin2, INPUT);
-  
   // Explicitly stop the motors
   digitalWrite(ENA, LOW);
   digitalWrite(IN1, LOW);
@@ -92,63 +89,49 @@ void setup() {
 }
 
 void loop() {
-//sensor detection
-//long duration1, distance1;
-//long duration2, distance2;
-
-//digitalWrite(trigPin1, LOW);
-//digitalWrite(trigPin2, LOW);
-
-//delayMicroseconds(2);
-  
-//digitalWrite(trigPin1, HIGH);
-//digitalWrite(trigPin2, HIGH);
-
-//delayMicroseconds(2);
-  
-//digitalWrite(trigPin1, LOW);
-//digitalWrite(trigPin2, LOW);
-
-//duration1 =pulseIn(echoPin1,HIGH);
-//duration2 =pulseIn(echoPin2,HIGH);
-
-//distance1=duration1*(0.034/2);
-//distance2=duration2*(0.034/2);
-
-//if (distance1<=0.1524  || distance2<=0.1524 {
-
-//digitalWrite(ENA, LOW);
-//digitalWrite(IN1, LOW);
-//digitalWrite(IN2, LOW);
-//digitalWrite(ENB, LOW);
-//digitalWrite(IN3, LOW);
-//digitalWrite(IN4, LOW);
-//}
-  
+    // Process GPS data
     while (Serial1.available() > 0) {
-    if (gps.encode(Serial1.read())) {
-      if (gps.location.isValid()) {
-        Serial.println("Valid GPS Data Received:");
-        Serial.print("Latitude: ");
-        Serial.println(gps.location.lat(), 6);
-        Serial.print("Longitude: ");
-        Serial.println(gps.location.lng(), 6);
-      } else {
-        Serial.println("Invalid GPS Data Received");
+      if (gps.encode(Serial1.read())) {
+        if (gps.location.isValid()) {
+          hasValidGPS = true;
+          digitalWrite(gpsLED, HIGH);
+          Serial.println("Valid GPS Data Received:");
+          Serial.print("Latitude of ArduinoA: ");
+          Serial.println(gps.location.lat(), 6);
+          Serial.print("Longitude of ArduinoA: ");
+          Serial.println(gps.location.lng(), 6);
+        } else {
+          Serial.println("Invalid GPS Data Received");
+          digitalWrite(gpsLED, LOW);
+          hasValidGPS = false;
+        }
       }
     }
-  }
-  
-  while (Serial1.available() > 0) {
-    if (gps.encode(Serial1.read())) {
-      if (gps.location.isValid()) {
-        hasValidGPS = true;
-        digitalWrite(gpsLED, HIGH);
-        Serial.println("Valid GPS Data Received:");
-        Serial.print("Latitude: ");
-        Serial.println(gps.location.lat(), 6);
-        Serial.print("Longitude: ");
-        Serial.println(gps.location.lng(), 6);
+
+    // Ensure this is outside the GPS data processing loop to not delay obstacle checks
+    if (hasValidGPS) {
+      // Obstacle detection
+      long distance1 = readDistance(trigPin1, echoPin1);
+      long distance2 = readDistance(trigPin2, echoPin2);
+
+      Serial.print("Distance1: ");
+      Serial.print(distance1);
+      Serial.println(" cm");
+      Serial.print("Distance2: ");
+      Serial.print(distance2);
+      Serial.println(" cm");
+
+      if (distance1 < 30 || distance2 < 30) {
+        // Obstacle detected, stop motors
+        Serial.println("Obstacle detected, stopping motors");
+        digitalWrite(IN1, LOW);
+        digitalWrite(IN2, LOW);
+        digitalWrite(IN3, LOW);
+        digitalWrite(IN4, LOW);
+        analogWrite(ENA, 0);
+        analogWrite(ENB, 0);
+      } else {
+        // No obstacle, proceed with following logic
         double targetLat = getTargetLatitudeFromArduinoB();
         double targetLon = getTargetLongitudeFromArduinoB();
         double currentLat = gps.location.lat();
@@ -159,19 +142,21 @@ void loop() {
         float heading = atan2(event.magnetic.y, event.magnetic.x) * 180 / PI;
 
         float bearing = TinyGPSPlus::courseTo(currentLat, currentLon, targetLat, targetLon);
-
-        if (hasValidGPS) {
-          adjustDirection(heading, bearing);
-          moveTowards(targetLat, targetLon, currentLat, currentLon);
-        }
-    
-      } else {
-        Serial.println("Invalid GPS Data Received");
-        digitalWrite(gpsLED, LOW);
+        adjustDirection(heading, bearing);
+        moveTowards(targetLat, targetLon, currentLat, currentLon);
       }
+    } else {
+      // If no valid GPS, ensure motors are stopped to handle the "lost" scenario
+      digitalWrite(IN1, LOW);
+      digitalWrite(IN2, LOW);
+      digitalWrite(IN3, LOW);
+      digitalWrite(IN4, LOW);
+      analogWrite(ENA, 0);
+      analogWrite(ENB, 0);
+      Serial.println("No valid GPS. Motors stopped.");
     }
-  }
 }
+
 
 void connectWiFi() {
   Serial.println("Connecting to WiFi...");
@@ -193,69 +178,107 @@ double getTargetLatitudeFromArduinoB() {
   if (client.connect(serverAddress, serverPort)) {
     client.println("GET LATITUDE");
     Serial.println("Requesting latitude from ArduinoB...");
-    while (client.available() == 0);
-    if (client.available() > 0) {
-      latitude = client.parseFloat();
-      Serial.print("Longitude received from ArduinoB: ");
-      Serial.println(latitude, 6);
+    while (client.available() == 0) {
+      delay(1); // Small delay to wait for data
     }
+    String latitudeString = client.readStringUntil('\n');
+    latitude = latitudeString.toDouble();
     client.stop();
   }
+  Serial.print("Latitude received from ArduinoB: ");
+  Serial.println(latitude, 6);
   return latitude;
 }
+
 
 double getTargetLongitudeFromArduinoB() {
   double longitude = 0;
   if (client.connect(serverAddress, serverPort)) {
     client.println("GET LONGITUDE");
-    Serial.println("Requesting logitude from ArduinoB...");
-    while (client.available() == 0);
-    if (client.available() > 0) {
-      longitude = client.parseFloat();
-      Serial.print("Longitude received from ArduinoB: ");
-      Serial.println(longitude, 6);
+    Serial.println("Requesting longitude from ArduinoB...");
+    while (client.available() == 0) {
+      delay(1); // Small delay to wait for data
     }
+    String longitudeString = client.readStringUntil('\n');
+    longitude = longitudeString.toDouble();
     client.stop();
   }
+  Serial.print("Longitude received from ArduinoB: ");
+  Serial.println(longitude, 6);
   return longitude;
 }
 
+
+
 void adjustDirection(float heading, float targetBearing) {
+  // Magnetic declination adjustment
+  heading += 6.13;
+  if (heading > 360) heading -= 360; // Ensure the heading is within 0 to 360 degrees
+  
   float angleDiff = targetBearing - heading;
-  if (angleDiff < 0) {
-    angleDiff += 360;
-  }
-  if (angleDiff > 180) {
+
+  // Normalize the angle difference to between 0 and 360 degrees
+  angleDiff = fmod(angleDiff + 360, 360); // More robust normalization
+
+  Serial.print("Adjusted Heading: "); Serial.println(heading);
+  Serial.print("Target Bearing: "); Serial.println(targetBearing);
+  Serial.print("Angle Difference: "); Serial.println(angleDiff);
+
+  // Define a tolerance for deciding when to move straight
+  const float tolerance = 10; // Degrees within which we consider we're "close enough" to the correct bearing
+
+  if (angleDiff > 180 + tolerance) {
     // Turn left
+    Serial.println("Turning Left");
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, HIGH);
     digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
-  } else {
+  } else if (angleDiff > tolerance && angleDiff <= 180 - tolerance) {
     // Turn right
+    Serial.println("Turning Right");
     digitalWrite(IN1, HIGH);
     digitalWrite(IN2, LOW);
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, HIGH);
+  } else {
+    // Move straight
+    Serial.println("Moving Straight");
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
   }
 }
 
+
 void moveTowards(double targetLat, double targetLon, double currentLat, double currentLon) {
   double distance = calculateDistance(currentLat, currentLon, targetLat, targetLon);
-  if (distance > 1) { // More than 1 meter away
+
+  Serial.print("Distance to Target: "); Serial.println(distance);
+
+  if (distance > 10) { // Assuming 1 meter as the threshold to stop
     // Move forward
+    Serial.println("Moving forward");
+    analogWrite(ENA, minSpeed);
+    analogWrite(ENB, minSpeed);
+
     digitalWrite(IN1, HIGH);
     digitalWrite(IN2, LOW);
     digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
   } else {
     // Stop if within 1 meter of the target
+    Serial.println("Stopping");
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, LOW);
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, LOW);
+    analogWrite(ENA, 0);
+    analogWrite(ENB, 0);
   }
 }
+
 
 double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
   double dLat = toRadians(lat2 - lat1);
@@ -269,4 +292,19 @@ double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
 
 double toRadians(double degrees) {
   return degrees * PI / 180.0;
+}
+
+long readDistance(int trigPin, int echoPin) {
+  // Clear the trigPin condition
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  long duration = pulseIn(echoPin, HIGH);
+  // Calculating the distance
+  long distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and return)
+  return distance;
 }
