@@ -50,8 +50,8 @@ const int buzzerPin = 9; // Buzzer connected to digital pin 9
 
 
 // Constants for motor control
-const int minSpeed = 100;      // Minimum speed for motors
-const int maxSpeed = 255;      // Maximum speed for motors
+const int minSpeed = 10;      // Minimum speed for motors
+const int maxSpeed = 20;      // Maximum speed for motors
 const double maxDistance = 10; // Maximum distance to operate motors at max speed (in meters)
 
 // Constants for GPS coordinates
