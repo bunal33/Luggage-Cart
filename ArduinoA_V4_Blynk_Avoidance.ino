@@ -66,10 +66,11 @@ BLYNK_WRITE(V1) {
   systemPower = param.asInt(); // Assign the incoming value from Blynk app to systemPower
   if (!systemPower) {
     // If the system is turned off, stop the motors
-    digitalWrite(ENA, LOW);
+    analogWrite(ENA, 0);
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, LOW);
-    digitalWrite(ENB, LOW);
+    
+    analogWrite(ENB, 0);
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, LOW);
     digitalWrite(gpsLED, LOW); // Optionally turn off the GPS LED
@@ -112,10 +113,10 @@ void setup() {
   pinMode(IN4, OUTPUT);
 
   // Explicitly stop the motors
-  digitalWrite(ENA, LOW);
+  analogWrite(ENA, 0);
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, LOW);
-  digitalWrite(ENB, LOW);
+  analogWrite(ENB, 0);
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, LOW);
 
@@ -152,8 +153,12 @@ void loop() {
   // Checking if distance is within obstacle avoidance threshold
   if (distance < 30 && distance > 0) {
     // Stop the motors if an obstacle is detected within 30 cm
-    digitalWrite(ENA, LOW);
-    digitalWrite(ENB, LOW);
+    analogWrite(ENA, 0);
+    analogWrite(ENB, 0);
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, LOW);
   } else {
     // Resume operations if the obstacle is cleared, but still check for system power status
     if (systemPower) {
@@ -249,12 +254,14 @@ void adjustDirection(float heading, float targetBearing) {
   }
   if (angleDiff > 180) {
     // Turn left
+    analogWrite (ENA, minSpeed); //switch to ENB if its turning right 
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, HIGH);
     digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
   } else {
     // Turn right
+    analogWrite(ENB, minSpeed); //switch to ENA if its turning left 
     digitalWrite(IN1, HIGH);
     digitalWrite(IN2, LOW);
     digitalWrite(IN3, LOW);
@@ -266,12 +273,16 @@ void moveTowards(double targetLat, double targetLon, double currentLat, double c
   double distance = calculateDistance(currentLat, currentLon, targetLat, targetLon);
   if (distance > 1) { // More than 1 meter away
     // Move forward
+    analogWrite(ENA,minSpeed);
+    analogWrite(ENB, minSpeed);
     digitalWrite(IN1, HIGH);
     digitalWrite(IN2, LOW);
     digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
   } else {
     // Stop if within 1 meter of the target
+    analogWrite(ENA,0);
+    analogWrite(ENB,0);
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, LOW);
     digitalWrite(IN3, LOW);
