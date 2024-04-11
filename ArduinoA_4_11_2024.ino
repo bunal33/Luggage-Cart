@@ -1,7 +1,17 @@
 // cart
+
+// Blynk credentials
+#define BLYNK_TEMPLATE_ID "TMPL2RacGwd52"
+#define BLYNK_TEMPLATE_NAME "Follow Me Luggage CA"
+#define BLYNK_AUTH_TOKEN "E_aT698EAtWa09a2H9xLjAaR7acfksNv"
+
 #include <WiFi.h>
+#include <WiFiClient.h>
 #include <TinyGPS++.h>
 #include <Wire.h>
+#include <Blynk.h>
+#include <BlynkSimpleWifi.h>
+#include <WifiS3.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_HMC5883_U.h>
 
@@ -51,14 +61,33 @@ const int trigPin2 = 7;
 const int echoPin2 = 8;
 
 // Constants for motor control
-const int minSpeed = 100;      // Minimum speed for motors
-const int maxSpeed = 255;      // Maximum speed for motors
+const int minSpeed = 10;      // Minimum speed for motors
+const int maxSpeed = 20;      // Maximum speed for motors
 const double maxDistance = 10; // Maximum distance to operate motors at max speed (in meters)
 
 // Constants for GPS coordinates
 const double EARTH_RADIUS = 6371000; // Earth's radius in meters
 
 bool hasValidGPS = false; // Flag to indicate valid GPS data
+
+int systemPower=0;
+
+
+BLYNK_WRITE(V1) {
+  systemPower = param.asInt(); // Assign the incoming value from Blynk app to systemPower
+  if (!systemPower) {
+    // If the system is turned off, stop the motors
+    analogWrite(ENA, 0);
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+    
+    analogWrite(ENB, 0);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, LOW);
+    digitalWrite(gpsLED, LOW); // Optionally turn off the GPS LED
+  }
+}
+
 
 void setup() {
   Serial.begin(9600);
@@ -101,6 +130,8 @@ void setup() {
 
 
 void loop() {
+    Blynk.run(); // Runs the Blynk process
+
     // Process GPS data
     while (Serial1.available() > 0) {
       if (gps.encode(Serial1.read())) {
@@ -350,3 +381,9 @@ long readDistance(int trigPin, int echoPin) {
   long distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and return)
   return distance;
 }
+
+
+// Send the distance to Blynk app on Virtual Pin V2
+//BLYNK_WRITE(V2) {
+//Blynk.virtualWrite(V2, distance);
+//}
