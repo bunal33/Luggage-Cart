@@ -234,6 +234,8 @@ void adjustDirection(float heading, float targetBearing) {
     digitalWrite(IN2, HIGH);
     digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
+    analogWrite(ENA, minSpeed);//switch to ENB if different motor is rotating
+    //analogWrite(ENB, 0);
   } else if (angleDiff > tolerance && angleDiff <= 180 - tolerance) {
     // Turn right
     Serial.println("Turning Right");
@@ -241,6 +243,8 @@ void adjustDirection(float heading, float targetBearing) {
     digitalWrite(IN2, LOW);
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, HIGH);
+    //analogWrite(ENA, 0);
+    analogWrite(ENB, minSpeed); //switch to ENA if different motor is rotating 
   } else {
     // Move straight
     Serial.println("Moving Straight");
